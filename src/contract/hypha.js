@@ -63,6 +63,24 @@ class HyphaSaleContract {
       hyphaRemainingThisRound,
     };
   }
+
+  async getHyphaBalance() {
+    const code = "token.hypha";
+    const account = "buy.hypha";
+    const currencySymbol = "HYPHA";
+    const [balanceFormatted] = await this.rpc.get_currency_balance(
+      code,
+      account,
+      currencySymbol
+    );
+
+    const balance =
+      balanceFormatted && balanceFormatted.length > currencySymbol.length
+        ? balanceFormatted.replace(currencySymbol, "").trim()
+        : 0;
+
+    return balance;
+  }
 }
 
 export default HyphaSaleContract;

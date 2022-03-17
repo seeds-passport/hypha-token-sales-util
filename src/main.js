@@ -6,10 +6,10 @@ import { API_ENDPOINT, RPC_ENDPOINT } from "./config/index";
 
 class HyphaTokenSale {
   constructor(rpcEndpoint = RPC_ENDPOINT, apiEndpoint = API_ENDPOINT) {
+    this.init = this.init.bind(this);
     this.init();
     this.rpcEndpoint = rpcEndpoint;
     this.apiEndpoint = apiEndpoint;
-    this.init = this.init.bind(this);
     this.convertHyphaToEOS = this.convertHyphaToEOS.bind(this);
     this.convertHyphaToBTC = this.convertHyphaToBTC.bind(this);
   }
