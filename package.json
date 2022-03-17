@@ -5,6 +5,7 @@
   "main": "dist/es.js",
   "scripts": {
     "test": "NODE_OPTIONS=--experimental-vm-modules npx jest",
+    "prepare": "npm run build",
     "build": "rollup -c"
   },
   "type": "module",

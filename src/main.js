@@ -5,13 +5,17 @@ import { initAPI, initRPC } from "./utils/index";
 import { API_ENDPOINT, RPC_ENDPOINT } from "./config/index";
 
 class HyphaTokenSale {
-  constructor(rpcEndpoint, apiEndpoint) {
-    this.init({ rpcEndpoint, apiEndpoint });
+  constructor(rpcEndpoint = RPC_ENDPOINT, apiEndpoint = API_ENDPOINT) {
+    this.init();
+    this.rpcEndpoint = rpcEndpoint;
+    this.apiEndpoint = apiEndpoint;
+    this.init = this.init.bind(this);
     this.convertHyphaToEOS = this.convertHyphaToEOS.bind(this);
     this.convertHyphaToBTC = this.convertHyphaToBTC.bind(this);
   }
 
-  async init({ rpcEndpoint = RPC_ENDPOINT, apiEndpoint = API_ENDPOINT } = {}) {
+  async init() {
+    const { rpcEndpoint, apiEndpoint } = this;
     const callApi = initAPI(apiEndpoint);
     const rpc = initRPC(rpcEndpoint);
 
