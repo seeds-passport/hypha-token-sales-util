@@ -59,7 +59,8 @@ class SeedsContract {
       table: TABLES.USERS,
     });
 
-    if (accountName !== profile.account) throw new Error("account-not-found");
+    if (!profile || accountName !== profile.account)
+      throw new Error("account-not-found");
     return new Profile(profile);
   }
 }
