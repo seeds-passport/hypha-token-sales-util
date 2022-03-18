@@ -27,8 +27,8 @@ class HyphaTokenSale {
     this.tokenSaleAPI = tokenSaleAPI;
 
     const roundDetails = await hyphaContract.getRoundDetails();
-    const { currentRound, usdPerHypha, hyphaRemainingThisRound } = roundDetails;
-    this.roundNo = currentRound;
+    const { roundNo, usdPerHypha, hyphaRemainingThisRound } = roundDetails;
+    this.roundNo = roundNo;
     this.usdPerHypha = usdPerHypha;
     this.hyphaRemainingThisRound = hyphaRemainingThisRound;
     return roundDetails;
@@ -58,7 +58,8 @@ class HyphaTokenSale {
   }
 
   async convertHyphaToUSD(hypha) {
-    if (!this.usdPerHypha) await this.init();
+    let usdPerHypha = this.usdPerHypha;
+    if (usdPerHypha) await this.init();
     const usd = Math.round(this.usdPerHypha * hypha, 2);
     return usd;
   }

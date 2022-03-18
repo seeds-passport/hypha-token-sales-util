@@ -9,6 +9,11 @@ export const TABLES = {
   PAY_HISTORY: "payhistory",
 };
 
+const parseCurrency = (formattedNumber, currencySymbol = "USD") =>
+  Number(
+    formattedNumber.substring(0, formattedNumber.length - currencySymbol.length)
+  );
+
 class HyphaSaleContract {
   constructor(rpc) {
     this.rpc = rpc;
@@ -52,9 +57,7 @@ class HyphaSaleContract {
 
     const currentRound = roundDetails.current_round_id;
     const usdPerHyphaFormatted = roundDetails.hypha_usd;
-    const usdPerHypha = Number(
-      usdPerHyphaFormatted.substring(0, usdPerHyphaFormatted.length - 4)
-    ).toPrecision(2);
+    const usdPerHypha = parseCurrency(usdPerHyphaFormatted, "USD");
     const hyphaRemainingThisRound = roundDetails.remaining / 100;
 
     return {
@@ -62,6 +65,27 @@ class HyphaSaleContract {
       usdPerHypha,
       hyphaRemainingThisRound,
     };
+  }
+
+  async getPricePerRound() {
+    const { rows: rounds } = await this.getRows({
+      table: TABLES.ROUNDS,
+      limit: 100,
+    });
+    const roundMap =
+      rounds &&
+      rounds
+        .map(({ id, max_sold, hypha_usd }) => ({
+          roundNo: id,
+          maxSold: max_sold / 100,
+          hyphaPerUsd: parseCurrency(hypha_usd),
+        }))
+        .reduce(
+          (roundMap, round) => ({ ...roundMap, [round.roundNo]: round }),
+          {}
+        );
+
+    return roundMap;
   }
 
   async getHyphaBalance() {
@@ -80,6 +104,33 @@ class HyphaSaleContract {
         : 0;
 
     return balance;
+  }
+
+  calculateCost({
+    amount,
+    currentRound,
+    hyphaRemainingThisRound,
+    priceMap,
+    prevCost = 0,
+  }) {
+    const { hyphaPerUsd, maxSold: maxSoldThisRound } = priceMap[currentRound];
+    if (Number(amount) <= Number(hyphaRemainingThisRound))
+      return prevCost + Number(amount) * Number(hyphaPerUsd);
+
+    const currentCost = prevCost + hyphaRemainingThisRound * hyphaPerUsd;
+    const remainingAmount = amount - hyphaRemainingThisRound;
+    const nextRound = Number(currentRound) + 1;
+    const { maxSold: maxSoldNextRound } = priceMap[nextRound];
+
+    const hyphaRemainingNextRound = maxSoldNextRound - maxSoldThisRound;
+
+    return this.calculateCost({
+      amount: remainingAmount,
+      currentRound: nextRound,
+      hyphaRemainingThisRound: hyphaRemainingNextRound,
+      prevCost: currentCost,
+      priceMap,
+    });
   }
 }
 
