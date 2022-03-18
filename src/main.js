@@ -2,7 +2,12 @@ import TokenSaleAPI from "./api/tokenSale";
 import HyphaSaleContract from "./contract/hypha";
 import SeedsContract from "./contract/seeds";
 import { initAPI, initRPC } from "./utils/index";
-import { API_ENDPOINT, RPC_ENDPOINT } from "./config/index";
+import {
+  API_ENDPOINT,
+  RPC_ENDPOINT,
+  EOS_DECIMAL_PLACES,
+  BTC_DECIMAL_PLACES,
+} from "./config/index";
 
 class HyphaTokenSale {
   constructor(rpcEndpoint = RPC_ENDPOINT, apiEndpoint = API_ENDPOINT) {
@@ -42,19 +47,27 @@ class HyphaTokenSale {
     this.seedsContract.getProfile(accountName);
 
   async convertHyphaToEOS(hypha) {
-    if (!this.usdPerHypha) await this.init();
+    let usdPerHypha = this.usdPerHypha;
+    if (!usdPerHypha) {
+      const roundDetails = await this.init();
+      usdPerHypha = roundDetails.usdPerHypha;
+    }
 
     const usd = Math.round(this.usdPerHypha * hypha, 2);
     const eos = await this.tokenSaleAPI.usdToEos(usd);
-
-    return eos;
+    return Number(eos).toFixed(EOS_DECIMAL_PLACES);
   }
 
   async convertHyphaToBTC(hypha) {
-    if (!this.usdPerHypha) await this.init();
+    let usdPerHypha = this.usdPerHypha;
+    if (!usdPerHypha) {
+      const roundDetails = await this.init();
+      usdPerHypha = roundDetails.usdPerHypha;
+    }
+
     const usd = Math.round(this.usdPerHypha * hypha, 2);
     const btc = await this.tokenSaleAPI.usdToBtc(usd);
-    return btc;
+    return Number(btc).toFixed(BTC_DECIMAL_PLACES);
   }
 
   async convertHyphaToUSD(hypha) {

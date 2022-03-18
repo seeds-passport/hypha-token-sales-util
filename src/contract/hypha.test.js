@@ -47,6 +47,13 @@ const cases = [
     expectedPrice: 100,
   },
   {
+    amount: 900000,
+    currentRound: 0,
+    hyphaRemainingThisRound: 100000,
+    priceMap,
+    expectedPrice: 1008000,
+  },
+  {
     amount: 150000,
     currentRound: 0,
     priceMap,
