@@ -89,7 +89,7 @@ class HyphaSaleContract {
   }
 
   async getHyphaBalance() {
-    const code = "token.hypha";
+    const code = "hypha.hypha";
     const account = "buy.hypha";
     const currencySymbol = "HYPHA";
     const [balanceFormatted] = await this.rpc.get_currency_balance(
