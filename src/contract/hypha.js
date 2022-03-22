@@ -1,5 +1,5 @@
-const HYPHA_SALE_CODE = "buy.hypha";
-const HYPHA_SALE_SCOPE = "buy.hypha";
+const HYPHA_SALE_CODE = "sale.hypha";
+const HYPHA_SALE_SCOPE = "sale.hypha";
 
 export const TABLES = {
   PRICE: "price",
@@ -90,7 +90,7 @@ class HyphaSaleContract {
 
   async getHyphaBalance() {
     const code = "hypha.hypha";
-    const account = "buy.hypha";
+    const account = "sale.hypha";
     const currencySymbol = "HYPHA";
     const [balanceFormatted] = await this.rpc.get_currency_balance(
       code,
