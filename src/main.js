@@ -53,7 +53,7 @@ class HyphaTokenSale {
       usdPerHypha = roundDetails.usdPerHypha;
     }
 
-    const usd = Math.round(this.usdPerHypha * hypha, 2);
+    const usd = Math.round(this.usdPerHypha * hypha * 100) / 100;
     const eos = await this.tokenSaleAPI.usdToEos(usd);
     return Number(eos).toFixed(EOS_DECIMAL_PLACES);
   }
@@ -65,7 +65,7 @@ class HyphaTokenSale {
       usdPerHypha = roundDetails.usdPerHypha;
     }
 
-    const usd = Math.round(this.usdPerHypha * hypha, 2);
+    const usd = Math.round(this.usdPerHypha * hypha * 100) / 100;
     const btc = await this.tokenSaleAPI.usdToBtc(usd);
     return Number(btc).toFixed(BTC_DECIMAL_PLACES);
   }
@@ -73,7 +73,7 @@ class HyphaTokenSale {
   async convertHyphaToUSD(hypha) {
     let usdPerHypha = this.usdPerHypha;
     if (usdPerHypha) await this.init();
-    const usd = Math.round(this.usdPerHypha * hypha, 2);
+    const usd = Math.round(this.usdPerHypha * hypha * 100) / 100;
     return usd;
   }
 
